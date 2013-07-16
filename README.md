@@ -40,29 +40,35 @@ If an array is specified as the `name` parameter each item in that array will be
       client = new StatsD();
 
   // Timing: sends a timing command with the specified milliseconds
-  client.timing('response_time', 42);
+  client.timing('response_time', 42).send();
 
   // Increment: Increments a stat by a value (default is 1)
-  client.increment('my_counter');
+  client.increment('my_counter').send();
 
   // Decrement: Decrements a stat by a value (default is -1)
-  client.decrement('my_counter');
+  client.decrement('my_counter').send();
 
   // Gauge: Gauge a stat by a specified amount
-  client.gauge('my_gauge', 123.45);
+  client.gauge('my_gauge', 123.45).send();
+
+  // Histogram: Datadog's histogram
+  client.histogram('histogram', 10).send();
 
   // Set: Counts unique occurrences of a stat (alias of unique)
-  client.set('my_unique', 'foobar');
-  client.unique('my_unique', 'foobarbaz');
+  client.set('my_unique', 'foobar').send();
+  client.unique('my_unique', 'foobarbaz').send();
 
   // Incrementing multiple items
-  client.increment(['these', 'are', 'different', 'stats']);
+  client.increment(['these', 'are', 'different', 'stats']).send();
 
   // Sampling, this will sample 25% of the time the StatsD Daemon will compensate for sampling
-  client.increment('my_counter', 1, 0.25);
+  client.increment('my_counter', 1).sampleRate(0.25).send();
+
+  // Datadog's Tags
+  client.increment('my_counter', 1).tags(['host:xyz']).send();
 
   // Using the callback
-  client.set(['foo', 'bar'], 42, null, function(error, bytes){
+  client.set(['foo', 'bar'], 42).send(function(error, bytes){
     //this only gets called once after all messages have been sent
     if(error){
       console.error('Oh noes! There was an error:', error);
