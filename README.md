@@ -1,18 +1,16 @@
-# node-statsd
+# dogstatsd-node
 
-A node.js client for [Etsy](http://etsy.com)'s [StatsD](https://github.com/etsy/statsd) server.
+A node.js client for [Etsy](http://etsy.com)'s [StatsD](https://github.com/etsy/statsd) server extended with Datadog's histogram and tags.
+
+Most of the code (including parts of this readme) is copied directly from the excellent https://github.com/sivy/node-statsd (v0.0.7), and the datadog parts wrote in by looking at https://github.com/joybro/node-dogstatsd, but with an added twist in the API.
+
+IMPORTANT: This is not a drop-in replacement for node-statsd or node-dogstatsd, the API has changed.
 
 This client will let you fire stats at your StatsD server from a node.js application.
 
-node-statsd Runs and is tested on Node 0.6+ on all *nix platforms and 0.8+ on all platforms including Windows.
+dogstatsd-node Runs and is tested on Node 0.6+ on all *nix platforms and 0.8+ on all platforms including Windows.
 
-[![Build Status](https://secure.travis-ci.org/vanchi-zendesk/node-statsd.png?branch=master)](http://travis-ci.org/vanchi-zendesk/node-statsd)
-
-## Installation
-
-```
-$ npm install node-statsd
-```
+[![Build Status](https://secure.travis-ci.org/vanchi-zendesk/dogstatsd-node.png?branch=master)](http://travis-ci.org/vanchi-zendesk/dogstatsd-node)
 
 ## Usage
 
@@ -27,11 +25,12 @@ Parameters (specified as an options hash):
 * `dnsCache`:  Cache the initial dns lookup to *host* `default: false`
 * `mock`:      Create a mock StatsD instance, sending no stats to the server? `default: false`
 
-All StatsD methods have the same API:
+All StatsD/DataDog methods have the same API:
 * `name`:       Stat name `required`
 * `value`:      Stat value `required except in increment/decrement where it defaults to 1/-1 respectively`
-* `sampleRate`: Sends only a sample of data to StatsD `default: 1`
-* `callback`:   The callback to execute once the metric has been sent
+
+which returns a Stat Object which can sent by calling .send() on them.
+Additional options to the stat maybe chained by calling stat.sampleRate(value).tags(['x:1']) before sending.
 
 If an array is specified as the `name` parameter each item in that array will be sent along with the specified value.
 
