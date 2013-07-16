@@ -173,10 +173,10 @@ describe('StatsD', function(){
       });
     });
 
-    it('should send proper time format with prefix, suffix, sampling and callback', function(finished){
+    it('should send proper time format with prefix, suffix, sampling, tags and callback', function(finished){
       var called = false;
       udpTest(function(message, server){
-        assert.equal(message, 'foo.test.bar:42|ms|@0.5');
+        assert.equal(message, 'foo.test.bar:42|ms|@0.5|#host:xyz,datacenter:1');
         assert.equal(called, true);
         server.close();
         finished();
@@ -184,7 +184,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.timing('test', 42).sampleRate(0.5).send(function(){
+        statsd.timing('test', 42).sampleRate(0.5).tags(['host:xyz','datacenter:1']).send(function(){
           called = true;
         });
       });
@@ -235,10 +235,10 @@ describe('StatsD', function(){
       });
     });
 
-    it('should send proper gauge format with prefix, suffix, sampling and callback', function(finished){
+    it('should send proper gauge format with prefix, suffix, sampling, tags and callback', function(finished){
       var called = false;
       udpTest(function(message, server){
-        assert.equal(message, 'foo.test.bar:42|g|@0.5');
+        assert.equal(message, 'foo.test.bar:42|g|@0.5|#host:xyz,datacenter:1');
         assert.equal(called, true);
         server.close();
         finished();
@@ -246,7 +246,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.gauge('test', 42).sampleRate(0.5).send(function(){
+        statsd.gauge('test', 42).sampleRate(0.5).tags(['host:xyz', 'datacenter:1']).send(function(){
           called = true;
         });
       });
@@ -297,10 +297,10 @@ describe('StatsD', function(){
       });
     });
 
-    it('should send proper count format with prefix, suffix, sampling and callback', function(finished){
+    it('should send proper count format with prefix, suffix, sampling, tags and callback', function(finished){
       var called = false;
       udpTest(function(message, server){
-        assert.equal(message, 'foo.test.bar:42|c|@0.5');
+        assert.equal(message, 'foo.test.bar:42|c|@0.5|#host:xyz,datacenter:1');
         assert.equal(called, true);
         server.close();
         finished();
@@ -308,7 +308,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.increment('test', 42).sampleRate(0.5).send(function(){
+        statsd.increment('test', 42).sampleRate(0.5).tags(['host:xyz','datacenter:1']).send(function(){
           called = true;
         });
       });
@@ -359,10 +359,10 @@ describe('StatsD', function(){
       });
     });
 
-    it('should send proper count format with prefix, suffix, sampling and callback', function(finished){
+    it('should send proper count format with prefix, suffix, sampling, tags and callback', function(finished){
       var called = false;
       udpTest(function(message, server){
-        assert.equal(message, 'foo.test.bar:-42|c|@0.5');
+        assert.equal(message, 'foo.test.bar:-42|c|@0.5|#host:xyz,datacenter:1');
         assert.equal(called, true);
         server.close();
         finished();
@@ -370,7 +370,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.decrement('test', 42).sampleRate(0.5).send(function(){
+        statsd.decrement('test', 42).sampleRate(0.5).tags(['host:xyz','datacenter:1']).send(function(){
           called = true;
         });
       });
@@ -422,10 +422,10 @@ describe('StatsD', function(){
       });
     });
 
-    it('should send proper set format with prefix, suffix, sampling and callback', function(finished){
+    it('should send proper set format with prefix, suffix, sampling, tags and callback', function(finished){
       var called = false;
       udpTest(function(message, server){
-        assert.equal(message, 'foo.test.bar:42|s|@0.5');
+        assert.equal(message, 'foo.test.bar:42|s|@0.5|#host:xyz,datacenter:1');
         assert.equal(called, true);
         server.close();
         finished();
@@ -433,7 +433,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.unique('test', 42).sampleRate(0.5).send(function(){
+        statsd.unique('test', 42).sampleRate(0.5).tags(['host:xyz','datacenter:1']).send(function(){
           called = true;
         });
       });
@@ -470,4 +470,65 @@ describe('StatsD', function(){
     });
   });
 
+  describe('#histogram', function(finished){
+    it('should send proper histogram format without prefix, suffix, sampling, tags and callback', function(finished){
+      udpTest(function(message, server){
+        assert.equal(message, 'test:42|h');
+        server.close();
+        finished();
+      }, function(server){
+        var address = server.address(),
+            statsd = new StatsD(address.address, address.port);
+
+        statsd.histogram('test', 42).send();
+      });
+    });
+
+    it('should send proper histogram format with prefix, suffix, sampling, tags and callback', function(finished){
+      var called = false;
+      udpTest(function(message, server){
+        assert.equal(message, 'foo.test.bar:42|h|@0.5|#host:xyz,datacenter:1');
+        assert.equal(called, true);
+        server.close();
+        finished();
+      }, function(server){
+        var address = server.address(),
+            statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
+
+        statsd.histogram('test', 42).sampleRate(0.5).tags(['host:xyz','datacenter:1']).send(function(){
+          called = true;
+        });
+      });
+    });
+
+    it('should properly send a and b with the same value', function(finished){
+      var called = 0,
+          messageNumber = 0;
+
+      udpTest(function(message, server){
+        if(messageNumber === 0){
+          assert.equal(message, 'a:42|h');
+          messageNumber += 1;
+        } else {
+          assert.equal(message, 'b:42|h');
+          server.close();
+          finished();
+        }
+      }, function(server){
+        var address = server.address(),
+            statsd = new StatsD(address.address, address.port);
+
+        statsd.histogram(['a', 'b'], 42).send(function(error, bytes){
+          called += 1;
+          assert.ok(called === 1); //ensure it only gets called once
+          assert.equal(error, null);
+          assert.equal(bytes, 12);
+        });
+      });
+    });
+
+    it('should send no histogram stat when a mock Client is used', function(finished){
+      assertMockClientMethod('histogram', finished);
+    });
+  });
 });
