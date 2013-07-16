@@ -6,7 +6,7 @@ This client will let you fire stats at your StatsD server from a node.js applica
 
 node-statsd Runs and is tested on Node 0.6+ on all *nix platforms and 0.8+ on all platforms including Windows.
 
-[![Build Status](https://secure.travis-ci.org/sivy/node-statsd.png?branch=master)](http://travis-ci.org/sivy/node-statsd)
+[![Build Status](https://secure.travis-ci.org/vanchi-zendesk/node-statsd.png?branch=master)](http://travis-ci.org/vanchi-zendesk/node-statsd)
 
 ## Installation
 
