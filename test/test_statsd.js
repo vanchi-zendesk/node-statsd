@@ -43,13 +43,13 @@ function assertMockClientMethod(method, finished){
 
     // Regression test for "undefined is not a function" with missing callback on mock instance.
     try {
-      statsd[method]('test', 1);
+      statsd[method]('test', 1).send();
     } catch(e) {
       callbackThrows = true;
     }
     assert.ok(!callbackThrows);
 
-    statsd[method]('test', 1, null, function(error, bytes){
+    statsd[method]('test', 1).send(function(error, bytes){
       assert.ok(!error);
       assert.equal(bytes, 0);
       // We should call finished() here, but we have to work around
@@ -169,7 +169,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.timing('test', 42);
+        statsd.timing('test', 42).send();
       });
     });
 
@@ -184,7 +184,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.timing('test', 42, 0.5, function(){
+        statsd.timing('test', 42).sampleRate(0.5).send(function(){
           called = true;
         });
       });
@@ -207,7 +207,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.timing(['a', 'b'], 42, null, function(error, bytes){
+        statsd.timing(['a', 'b'], 42).send(function(error, bytes){
           called += 1;
           assert.ok(called === 1); //ensure it only gets called once
           assert.equal(error, null);
@@ -231,7 +231,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.gauge('test', 42);
+        statsd.gauge('test', 42).send();
       });
     });
 
@@ -246,7 +246,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.gauge('test', 42, 0.5, function(){
+        statsd.gauge('test', 42).sampleRate(0.5).send(function(){
           called = true;
         });
       });
@@ -269,7 +269,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.gauge(['a', 'b'], 42, null, function(error, bytes){
+        statsd.gauge(['a', 'b'], 42).send(function(error, bytes){
           called += 1;
           assert.ok(called === 1); //ensure it only gets called once
           assert.equal(error, null);
@@ -293,7 +293,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.increment('test');
+        statsd.increment('test').send();
       });
     });
 
@@ -308,7 +308,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.increment('test', 42, 0.5, function(){
+        statsd.increment('test', 42).sampleRate(0.5).send(function(){
           called = true;
         });
       });
@@ -331,7 +331,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.increment(['a', 'b'], null, function(error, bytes){
+        statsd.increment(['a', 'b']).send(function(error, bytes){
           called += 1;
           assert.ok(called === 1); //ensure it only gets called once
           assert.equal(error, null);
@@ -355,7 +355,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.decrement('test');
+        statsd.decrement('test').send();
       });
     });
 
@@ -370,7 +370,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.decrement('test', 42, 0.5, function(){
+        statsd.decrement('test', 42).sampleRate(0.5).send(function(){
           called = true;
         });
       });
@@ -394,7 +394,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.decrement(['a', 'b'], null, function(error, bytes){
+        statsd.decrement(['a', 'b']).send(function(error, bytes){
           called += 1;
           assert.ok(called === 1); //ensure it only gets called once
           assert.equal(error, null);
@@ -418,7 +418,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.set('test', 42);
+        statsd.set('test', 42).send();
       });
     });
 
@@ -433,7 +433,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port, 'foo.', '.bar');
 
-        statsd.unique('test', 42, 0.5, function(){
+        statsd.unique('test', 42).sampleRate(0.5).send(function(){
           called = true;
         });
       });
@@ -456,7 +456,7 @@ describe('StatsD', function(){
         var address = server.address(),
             statsd = new StatsD(address.address, address.port);
 
-        statsd.unique(['a', 'b'], 42, null, function(error, bytes){
+        statsd.unique(['a', 'b'], 42).send(function(error, bytes){
           called += 1;
           assert.ok(called === 1); //ensure it only gets called once
           assert.equal(error, null);
