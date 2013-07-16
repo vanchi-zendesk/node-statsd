@@ -8,7 +8,7 @@ IMPORTANT: This is not a drop-in replacement for node-statsd or node-dogstatsd, 
 
 This client will let you fire stats at your StatsD server from a node.js application.
 
-dogstatsd-node Runs and is tested on Node 0.6+ on all *nix platforms and 0.8+ on all platforms including Windows.
+node-statsd Runs and is tested on Node 0.6+ on all *nix platforms and 0.8+ on all platforms including Windows. (So this should work too.)
 
 [![Build Status](https://api.travis-ci.org/vanchi-zendesk/dogstatsd-node.png?branch=master)](http://travis-ci.org/vanchi-zendesk/dogstatsd-node)
 
