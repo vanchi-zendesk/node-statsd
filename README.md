@@ -35,7 +35,7 @@ Additional options to the stat maybe chained by calling stat.sampleRate(value).t
 If an array is specified as the `name` parameter each item in that array will be sent along with the specified value.
 
 ```javascript
-  var StatsD = require('node-statsd').StatsD,
+  var StatsD = require('dogstatsd-node').StatsD,
       client = new StatsD();
 
   // Timing: sends a timing command with the specified milliseconds
@@ -91,5 +91,5 @@ If you want to catch errors in sending a message then use the callback provided.
 
 ## License
 
-node-statsd is licensed under the MIT license.
+node-statsd is licensed under the MIT license. So is this.
 
